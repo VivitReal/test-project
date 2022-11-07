@@ -2,7 +2,7 @@
   <v-app>
     <v-main>
       <div class="purple">
-        <TextTags :tags="tagList" :alignment="'center'" />
+        <TextTags :tags="tagList" :alignment="'space-between'" />
       </div>
 
       <v-divider></v-divider>

@@ -1,37 +1,38 @@
 <template>
   <div class="tag-list">
-    <div class="tag-list__body">
+    <div
+      class="tag-list__row"
+      :class="`justify-${validatedAlignment}`"
+    >
       <div
-        class="tag-list__row"
-        :class="`justify-${validatedAlignment}`"
+        class="tag tag-list__column"
+        v-for="(tag, index) in tagsWithDivider"
+        :key="index"
       >
-        <div
-          class="tag tag-list__column"
-          v-for="(tag, index) in filteredTags"
-          :key="index"
+        <v-icon
+          class="tag__divider"
+          v-if="tag.divider"
+          :size="dotIconSize"
         >
-          <v-icon
-            class="tag__divider"
-            v-if="index !== 0"
-            :size="dotIconSize"
-          >
-            mdi-circle
-          </v-icon>
+          mdi-circle
+        </v-icon>
 
-          <v-icon
-            class="tag__icon"
-            v-if="tag.icon"
-          >
-            {{ tag.icon }}
-          </v-icon>
+        <v-icon
+          class="tag__icon"
+          v-if="tag.icon"
+        >
+          {{ tag.icon }}
+        </v-icon>
 
-          <span class="tag__text">
-            {{ tag.text }}
-          </span>
-        </div>
+        <span
+          class="tag__text"
+          v-if="tag.text"
+        >
+          {{ tag.text }}
+        </span>
       </div>
     </div>
-  </div>
+</div>
 </template>
 
 <script>
@@ -54,10 +55,19 @@ export default {
 
   computed: {
     validatedAlignment() {
-      return ['center', 'start'].includes(this.alignment) ? this.alignment : 'start';
+      return ['space-between', 'start'].includes(this.alignment) ? this.alignment : 'start';
     },
-    filteredTags() {
-      return this.tags.filter((tag) => typeof tag === 'object' && 'text' in tag);
+    tagsWithDivider() {
+      const filteredTags = this.filterTags(this.tags);
+      return filteredTags.flatMap(
+        (item, index) => (index < filteredTags.length - 1 ? [item, { divider: true }] : item),
+      );
+    },
+  },
+
+  methods: {
+    filterTags(tags) {
+      return tags.filter((tag) => typeof tag === 'object' && 'text' in tag);
     },
   },
 };
@@ -65,11 +75,9 @@ export default {
 
 <style lang="scss">
 .tag-list {
-  &__body {
+  &__row {
     max-height: 1.5em;
     overflow: hidden;
-  }
-  &__row {
     display: flex;
     flex-wrap: wrap;
   }
