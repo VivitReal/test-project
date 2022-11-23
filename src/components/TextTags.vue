@@ -32,7 +32,7 @@
         </span>
       </div>
     </div>
-</div>
+  </div>
 </template>
 
 <script>
@@ -69,6 +69,28 @@ export default {
     filterTags(tags) {
       return tags.filter((tag) => typeof tag === 'object' && 'text' in tag);
     },
+
+    hideOverflowElements() {
+      const blockTopSize = document.querySelector('.tag-list').getBoundingClientRect().top;
+      const tagElements = document.querySelectorAll('.tag-list__column');
+
+      tagElements.forEach((element, index) => {
+        const elementTopSize = element.getBoundingClientRect().top;
+        if (index % 2 === 0 && elementTopSize > blockTopSize) {
+          element.classList.add('tag-list__column_hidden');
+          tagElements[index - 1].classList.add('tag-list__column_hidden');
+        }
+      });
+    },
+  },
+
+  mounted() {
+    this.hideOverflowElements();
+    window.addEventListener('resize', this.hideOverflowElements);
+  },
+
+  unmounted() {
+    window.removeEventListener('resize', this.hideOverflowElements);
   },
 };
 </script>
@@ -84,6 +106,10 @@ export default {
   &__column {
     display: flex;
     align-items: center;
+
+    &_hidden {
+      display: none;
+    }
   }
 }
 
